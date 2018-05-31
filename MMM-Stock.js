@@ -39,21 +39,22 @@ Module.register("MMM-Stock", {
 			if (!data.hasOwnProperty(key)) {continue;}
 			var symbol = key;
 			var price = data[symbol]["latestPrice"];
-			var change = data[symbol]["open"] - price;
+			var change = data[symbol]["change"];
 			if (!this.config.companySymbolInsteadOfName) {
 				symbol = data[symbol]["companyName"]
 			}
 
 			var html = "";
-			var priceClass = "greentext", priceIcon="up_green";
-			if(change < 0) {
+			var priceClass = "greentext";
+			var priceIcon = "up_green";
+			if (change < 0) {
 				priceClass = "redtext";
-				priceIcon="down_red";
+				priceIcon = "down_red";
 			}
 			html = html + "<span class='" + priceClass + "'>";
 			html = html + "<span class='quote'> (" + symbol + ")</span> ";
 			html = html + parseFloat(price).toFixed(2) + " USD";
-			html = html + "<span class='" + priceIcon + "'></span>" + parseFloat(Math.abs(change)).toFixed(2);
+			html = html + "<span class='" + priceIcon + "'></span>" + Math.abs(change);
 
 			var stock = document.createElement("span");
 			stock.className = "stockTicker";
