@@ -16,8 +16,8 @@ module.exports = NodeHelper.create({
 			request({ url: url, method: "GET" }, function (error, response, body) {
 				if (!error && response.statusCode == 200) {
 					var result = JSON.parse(body);
-					var compName = result["companyName"];
-					results[compName] = result;
+					var compSymbol = result["symbol"];
+					results[compSymbol] = result;
 				} else {
 					console.log("Error retrieving " + url + ": " + body);
 				}

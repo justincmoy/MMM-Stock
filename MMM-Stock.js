@@ -8,7 +8,8 @@ Module.register("MMM-Stock", {
 		companies: ["GOOGL", "YHOO"],
 		currency: "usd",
 		baseURL: "https://api.iextrading.com/1.0/stock/%s/quote",
-		apikey: "IPWULBT54Y3LHJME"
+		apikey: "IPWULBT54Y3LHJME",
+		companySymbolInsteadOfName: false
 	},
 
 	getStyles: function() {
@@ -50,6 +51,9 @@ Module.register("MMM-Stock", {
 			var symbol = key;
 			var price = data[symbol]["latestPrice"];
 			var change = data[symbol]["open"] - price;
+			if (!this.config.companySymbolInsteadOfName) {
+				symbol = data[symbol]["companyName"]
+			}
 
 			var html = "";
 			var priceClass = "greentext", priceIcon="up_green";
