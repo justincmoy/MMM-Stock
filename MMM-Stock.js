@@ -6,7 +6,6 @@ Module.register("MMM-Stock", {
 		updateInterval: 60000,
 		fadeSpeed: 1000,
 		companies: ["GOOGL", "YHOO"],
-		currency: "usd",
 		baseURL: "https://api.iextrading.com/1.0/stock/%s/quote",
 		apikey: "IPWULBT54Y3LHJME",
 		companySymbolInsteadOfName: false
@@ -22,9 +21,6 @@ Module.register("MMM-Stock", {
 
 	start: function() {
 		this.getStocks();
-		if(this.config.currency.toLowerCase() != "usd"){
-			this.getExchangeRate();
-		}
 		this.scheduleUpdate();
 	},
 
@@ -37,13 +33,6 @@ Module.register("MMM-Stock", {
 		// the data is not ready
 		if(Object.keys(data).length === 0 && data.constructor === Object){
 			return wrapper;
-		}
-
-		//if another currency is required - usd is default
-		var differentCurrency = false;
-		if(this.config.currency.toLowerCase() != "usd"){
-			differentCurrency = true;
-			var requiredCurrency = this.config.currency.toUpperCase();
 		}
 
 		for (var key in data) {
@@ -88,9 +77,6 @@ Module.register("MMM-Stock", {
 		var that = this;
 		setInterval(function() {
 			that.getStocks();
-			if(this.config.currency.toLowerCase() != "usd"){
-				that.getExchangeRate();
-			}
 		}, loadTime);
 	},
 
@@ -104,16 +90,10 @@ Module.register("MMM-Stock", {
 		this.sendSocketNotification("GET_STOCKS", urls);
 	},
 
-	getExchangeRate: function () {
-		var url = this.config.baseURL + "?q=select%20*%20from%20yahoo.finance.xchange%20where%20pair%20in%20('USD" + this.config.currency + "')&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback="
-		this.sendSocketNotification("GET_EXCHANGE_RATE", url);
-	},
 	socketNotificationReceived: function(notification, payload) {
 		if (notification === "STOCK_RESULT") {
 			this.result = payload;
 			this.updateDom(self.config.fadeSpeed);
-		} else if(notification === "EXCHANGE_RATE"){
-			this.rate = payload;
 		}
 	}
 });
