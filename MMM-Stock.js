@@ -7,7 +7,7 @@ Module.register("MMM-Stock", {
 		fadeSpeed: 1000,
 		companies: ["GOOGL", "YHOO"],
 		currency: "usd",
-		baseURL: "https://www.alphavantage.co/",
+		baseURL: "https://api.iextrading.com/1.0/stock/%s/quote",
 		apikey: "IPWULBT54Y3LHJME"
 	},
 
@@ -48,11 +48,8 @@ Module.register("MMM-Stock", {
 		for (var key in data) {
 			if (!data.hasOwnProperty(key)) {continue;}
 			var symbol = key;
-			var obj = data[key];
-			var current = obj[0];
-			var prev = obj[1];
-			var price = current["4. close"];
-			var change = prev["4. close"] - current["4. close"];
+			var price = data[symbol]["latestPrice"];
+			var change = data[symbol]["open"] - price;
 
 			var html = "";
 			var priceClass = "greentext", priceIcon="up_green";
@@ -97,7 +94,7 @@ Module.register("MMM-Stock", {
 		var allCompanies = this.config.companies;
 		var urls = [];
 		for(var company in allCompanies){
-			var url = this.config.baseURL + "query?function=TIME_SERIES_DAILY&outputsize=compact&symbol=" + allCompanies[company] + "&apikey=" + this.config.apikey;
+			var url = this.config.baseURL.replace(/%s/, allCompanies[company]);
 			urls.push(url);
 		}
 		this.sendSocketNotification("GET_STOCKS", urls);
